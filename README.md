@@ -1,5 +1,7 @@
 # NPY Cost-Utility Analysis
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22082050.svg)](https://doi.org/10.5281/zenodo.22082050)
+
 R decision-analytic cost-utility model for the Nikshay Poshan Yojana
 (NPY) tuberculosis cash-transfer programme in India.
 
