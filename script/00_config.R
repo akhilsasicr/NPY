@@ -75,7 +75,11 @@ n_psa_evppi <- 5000
 # GROUP A — CHE (Catastrophic Health Expenditure) constants
 # ============================================================
 # Anchor: proportion of non-receipt DS-TB patients who incur CHE.
-# Source: Dr Jeyashree; primary paper
+# Source: Jeyashree K, Thangaraj JWV, Shanmugasundaram D, et al. Cost
+# of TB care and equity in distribution of catastrophic TB care costs
+# across income quintiles in India. Glob Health Res Policy 2024;9(1):51.
+# doi:10.1186/s41256-024-00392-9. (Cross-verified against two
+# independent PI-supplied reference lists, 24 Aug 2026.)
 # Also OWSA'd (±20%) via cat_params/cat_ci_lower/cat_ci_upper in
 # 02_model.R, under the name p_nr_dstb_cat — owsa_multipliers below
 # is a separate, narrower mechanism for the RR/OR structural
@@ -83,14 +87,27 @@ n_psa_evppi <- 5000
 p_nr_dstb_cat_src <- 0.4255319
 
 # Relative risk of CHE, NPY receipt vs non-receipt.
-# Source: Wingfield T et al. Eur Respir J 2016.
+# Source: Wingfield T, Tovar MA, Huff D, et al. The economic effects
+# of supporting tuberculosis-affected households in Peru. Eur Respir J
+# 2016;48(5):1396. doi:10.1183/13993003.00066-2016. PMID 27660507.
+# (Full citation confirmed 24 Aug 2026 -- previously recorded here only
+# as "Wingfield T et al. Eur Respir J 2016", with no volume/pages/DOI;
+# cross-verified against the manuscript's own reference list and a
+# PI-supplied supplementary appendix, both citing this exact paper.)
 rr_npy_che <- 0.71
 
 # Odds ratio of CHE, DR-TB vs DS-TB.
 or_drtb_che <- 1.61
 
 # Odds ratio of unfavourable outcome (failure/death) given CHE.
-# Source: Wingfield T et al. PLoS Med 2014;11(7):e1001675.
+# Sources: Wingfield T et al. PLoS Med 2014;11(7):e1001675
+# (doi:10.1371/journal.pmed.1001675, PMID 25025331); Fuady A,
+# Houweling TAJ, Mansyur M, Burhan E, Richardus JH. Catastrophic costs
+# due to tuberculosis worsen treatment outcomes: a prospective cohort
+# study in Indonesia. Trans R Soc Trop Med Hyg 2020;114(9):666-673.
+# doi:10.1093/trstmh/traa038. PMID 32511712. (Fuady added 24 Aug 2026 --
+# a PI-supplied supplementary appendix reports this OR = 1.7 as
+# sourced to BOTH papers jointly, not Wingfield 2014 alone.)
 or_che_outcome <- 1.7
 
 # OWSA ranges for the two structural CHE multipliers above.
