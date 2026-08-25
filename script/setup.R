@@ -91,7 +91,7 @@ cat("\n-- Creating folder structure --\n")
 # convenience/sanity check; the numbered scripts also create their
 # own folders at runtime regardless (recursive=TRUE dir.create calls).
 scenario_subdirs <- c(
-  "A_temporal_mismatch", "B_cost_perspective",
+  "A_temporal_mismatch", "B_cost_decomposition",
   "C_premature_death_qaly", "D_dr_utility_ratio"
 )
 out_root <- "output"

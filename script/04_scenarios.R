@@ -93,7 +93,7 @@ cat(sprintf("  CHE: anchor=%.7f | rr_npy=%.2f | or_drtb=%.2f | or_outcome=%.1f\n
 
 # ── Output folders ────────────────────────────────────────────
 out_scen <- file.path(out_root, "scenarios")
-for (d in c("A_temporal_mismatch", "B_cost_perspective", "D_dr_utility_ratio")) {
+for (d in c("A_temporal_mismatch", "B_cost_decomposition", "D_dr_utility_ratio")) {
   dir.create(file.path(out_scen, d, "tables"), recursive = TRUE, showWarnings = FALSE)
   dir.create(file.path(out_scen, d, "plots"),  recursive = TRUE, showWarnings = FALSE)
 }
@@ -393,7 +393,7 @@ scenario_b_available <- all(vapply(required_de_params, function(nm) {
 }, logical(1)))
 
 if (scenario_b_available) {
-  out_B <- file.path(out_scen, "B_cost_perspective")
+  out_B <- file.path(out_scen, "B_cost_decomposition")
 
   cat("  Health-system / patient cost (flat, per TB type):\n")
   for (tb in c("DSTB", "DRTB")) {
@@ -642,7 +642,7 @@ if (scenario_b_available) {
       round(100 * mean((wtp * (psa_B_pt$qaly_ri - psa_B_pt$qaly_nonpy) - (psa_B_pt$cost_ri - psa_B_pt$cost_nonpy)) > 0), 1)
     )
   )
-  write_xlsx(persp_summary, file.path(out_B, "tables", "perspective_summary.xlsx"))
+  write_xlsx(persp_summary, file.path(out_B, "tables", "cost_share_summary.xlsx"))
   cat("\nOK - Scenario B combined cost-share summary saved\n")
 } else {
   cat("\n*** SCENARIO B SKIPPED ***\n")
