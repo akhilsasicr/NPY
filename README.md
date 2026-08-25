@@ -8,7 +8,7 @@ R decision-analytic cost-utility model for the Nikshay Poshan Yojana
 Compares four strategies (No NPY, Current NPY, Realistic Improvement,
 Ideal Improvement) via a decision tree with probabilistic sensitivity
 analysis, scenario analyses (temporal mismatch correction,
-health-system/patient cost perspectives, premature-death QALY loss,
+health-system/patient cost decomposition, premature-death QALY loss,
 DR-TB utility ratio), value-of-information analysis, and
 willingness-to-pay threshold sensitivity.
 
