@@ -421,20 +421,72 @@ if (scenario_b_available) {
   cat(" HS/patient are flat across receipt group and outcome while Total and\n")
   cat(" Transfer are not — an intentional simplification, not an error.)\n")
 
-  # make_persp_base(): replaces the 18 standard + 6 No-NPY cost
-  # parameters in a base parameter list with their perspective-specific
-  # value: health-system (suffix="_hs") = real (death-adjusted) NPY
-  # transfer + the flat health-system cost for that cell's TB type;
-  # patient (suffix="_pt") = the flat patient cost for that TB type,
-  # unaffected by the transfer (NPY is never counted as patient cost).
+  # f_hs_share: health-system fraction of the flat NPY-receiver
+  # health-system/patient split, per TB type (derived from
+  # cost_healthsystem_*/cost_patient_*, e.g. 209.40/(209.40+318.86)
+  # = 39.6% for DS-TB). Used ONLY for the No-NPY counterfactual cells
+  # (nocost_param_names) below -- see the fix note in make_persp_base()
+  # for why.
+  f_hs_share <- setNames(vapply(c("DSTB", "DRTB"), function(tb) {
+    hs <- as.numeric(base[[hs_param_names[[tb]]]])
+    pt <- as.numeric(base[[pt_param_names[[tb]]]])
+    hs / (hs + pt)
+  }, numeric(1)), c("DSTB", "DRTB"))
+
+  # make_persp_base(): replaces the 18 NPY-active cost parameters and
+  # the 6 No-NPY counterfactual cost parameters with their
+  # perspective-specific value, but via TWO DIFFERENT mechanisms,
+  # because they come from two independently-sourced datasets that
+  # were never calibrated against each other:
+  #
+  #   NPY-active cells (cost_param_names): health-system (_hs) = real
+  #   (death-adjusted) NPY transfer + the flat health-system cost for
+  #   that cell's TB type; patient (_pt) = the flat patient cost for
+  #   that TB type. Both flat figures are measured on NPY-receiving
+  #   patients specifically (see cost_healthsystem_*/cost_patient_*,
+  #   input Excel), so this is a real, directly-sourced split.
+  #
+  #   No-NPY counterfactual cells (nocost_param_names): FIXED 25 Aug
+  #   2026 -- these previously went through the SAME flat-figure
+  #   substitution as the NPY-active cells above, silently discarding
+  #   the real, independently-sourced No-NPY cost data
+  #   (nocost_nr_params, 00_config.R Group B, from
+  #   Treeage/NoNPY cost.xlsx) and replacing it with a flat figure
+  #   measured on a completely different population (NPY recipients).
+  #   This broke additivity: health-system + patient no longer summed
+  #   to the real societal No-NPY total (a $49.56, ~10% gap on the
+  #   No-NPY row specifically, where there is no transfer to explain
+  #   the mismatch). Fixed by instead taking the REAL No-NPY total for
+  #   that cell and splitting IT proportionally, using the NPY-
+  #   receiver health-system/patient ratio (f_hs_share) as the best
+  #   available estimate of the split -- since the No-NPY population's
+  #   own health-system/patient cost ratio was never independently
+  #   measured. This is an ASSUMPTION (the same ratio measured on NPY
+  #   receivers is assumed to apply to the No-NPY counterfactual too),
+  #   not measured data, and should be described as such wherever this
+  #   scenario's methods are reported -- but it guarantees exact
+  #   additivity (health-system + patient = societal total) and avoids
+  #   the alternative failure mode of leaving No-NPY costs unsplit
+  #   (which would compare a split NPY-active cost against an unsplit,
+  #   full-societal No-NPY cost, understating incremental cost by the
+  #   entire patient share).
   make_persp_base <- function(base_params, suffix) {
     p <- base_params
-    for (nm in all_cell_names) {
+    for (nm in cost_param_names) {
       tb <- cell_tb[[nm]]
       p[[nm]] <- if (suffix == "_hs") {
         transfer_usd[[nm]] + as.numeric(base_params[[hs_param_names[[tb]]]])
       } else {
         as.numeric(base_params[[pt_param_names[[tb]]]])
+      }
+    }
+    for (nm in nocost_param_names) {
+      tb <- cell_tb[[nm]]
+      real_total <- as.numeric(base_params[[nm]])
+      p[[nm]] <- if (suffix == "_hs") {
+        real_total * f_hs_share[[tb]]
+      } else {
+        real_total * (1 - f_hs_share[[tb]])
       }
     }
     p
@@ -462,12 +514,30 @@ if (scenario_b_available) {
     })
     names(de_draws) <- de_param_names
     for (i in seq_len(n)) {
-      for (nm in all_cell_names) {
+      for (nm in cost_param_names) {
         tb <- cell_tb[[nm]]
         params_list[[i]][[nm]] <- if (suffix == "_hs") {
           transfer_usd[[nm]] + de_draws[[hs_param_names[[tb]]]][i]
         } else {
           de_draws[[pt_param_names[[tb]]]][i]
+        }
+      }
+      # Same fix as make_persp_base(): split each iteration's own
+      # SAMPLED No-NPY draw (already in params_list[[i]][[nm]], from
+      # sample_psa_params()'s nocost_nr_params sampling) proportionally,
+      # using that same iteration's sampled health-system/patient
+      # ratio -- rather than discarding the real sampled No-NPY value
+      # and substituting the flat NPY-receiver draw outright.
+      for (nm in nocost_param_names) {
+        tb <- cell_tb[[nm]]
+        real_total_i <- params_list[[i]][[nm]]
+        hs_i <- de_draws[[hs_param_names[[tb]]]][i]
+        pt_i <- de_draws[[pt_param_names[[tb]]]][i]
+        f_hs_i <- hs_i / (hs_i + pt_i)
+        params_list[[i]][[nm]] <- if (suffix == "_hs") {
+          real_total_i * f_hs_i
+        } else {
+          real_total_i * (1 - f_hs_i)
         }
       }
     }
