@@ -128,8 +128,10 @@ for every run (there is no longer a per-uncertainty-mode split).
                  CAN BE RUN ANY TIME AFTER 02_model.R. Tests the
                  PRIMARY (year-1, unmodified) model's ICER/P(CE)
                  against both WTP thresholds (GDP-per-capita $2,536
-                 and the Ochalek-lineage opportunity-cost figure
-                 $487) in isolation — separating "does a lower
+                 and the health-system opportunity-cost figure $487,
+                 Pichon-Riviere et al. 2023 — see the script's own
+                 header for the full lineage/citations) in isolation
+                 — separating "does a lower
                  threshold alone change the answer" from Scenario C's
                  "does extending to lifetime QALYs change the
                  answer," which 05 conflates by only ever testing the
@@ -212,8 +214,9 @@ mean age, tracking the probability of still being alive and applying
 a half-year correction for people who die during a year.
 
 Scenario C reports the ICER against two thresholds — the
-GDP-per-capita figure ($2,536) and the Ochalek-lineage
-opportunity-cost figure ($487) — and runs three robustness sweeps:
+GDP-per-capita figure ($2,536) and the health-system opportunity-cost
+figure ($487, Pichon-Riviere et al. 2023) — and runs three robustness
+sweeps:
 
 1. **SMR sweep** — multiplies every age-specific death probability by
    a standardised mortality ratio, to represent the excess mortality

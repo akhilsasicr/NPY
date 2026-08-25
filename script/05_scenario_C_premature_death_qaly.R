@@ -187,7 +187,8 @@ print_icer("Scenario C: Premature-death QALY loss", strats, costs_C, qalys_C, ca
 
 # ── The headline comparison: ICER against BOTH thresholds ────
 # wtp and wtp_opportunity_cost both come from 00_config.R ($2,536
-# GDP-per-capita; $487 Ochalek-lineage opportunity-cost).
+# GDP-per-capita; $487 health-system opportunity-cost, Pichon-Riviere
+# et al. 2023 — full lineage/citations in 08_wtp_threshold_sensitivity.R).
 icer_vs_nonpy <- function(b) (b$cost_soc - b$cost_nonpy) / (b$qaly_soc - b$qaly_nonpy)
 icer_ri_vs_nonpy <- function(b) (b$cost_ri - b$cost_nonpy) / (b$qaly_ri - b$qaly_nonpy)
 

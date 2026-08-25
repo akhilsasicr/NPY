@@ -24,8 +24,13 @@
 wtp <- 2536
 wtp_year <- 2026
 
-# Ochalek opportunity-cost threshold for India, 2025
-# cross-country update — a more conservative alternative to GDP.
+# Health-system opportunity-cost threshold for India (Pichon-Riviere
+# et al. 2023, Lancet Glob Health, Table 3; descended from Ochalek
+# et al. 2018's cross-country methodology but not a direct
+# application of it) — a more conservative alternative to GDP.
+# Full lineage, candidate-value comparison, and an independent
+# replication check of a newer (2026, not peer-reviewed) update are
+# documented in script/08_wtp_threshold_sensitivity.R.
 wtp_opportunity_cost <- 487
 # Pichon-Riviere et al. (2023, Lancet Glob Health) reports this figure
 # in 2019 USD explicitly ("All thresholds ... are reported in US
@@ -36,26 +41,19 @@ wtp_opportunity_cost_year <- 2019
 # Shared display strings so every plot/table shows the same
 # number+year pairing.
 wtp_label                  <- paste0("$", format(wtp, big.mark = ","), " (", wtp_year, ")")
-wtp_opportunity_cost_label <- paste0("$", format(wtp_opportunity_cost, big.mark = ","), " (", wtp_opportunity_cost_year, ")")
+wtp_opportunity_cost_label <- paste0("$", format(wtp_opportunity_cost, big.mark = ","), " (", wtp_opportunity_cost_year, " USD)")
 
 # ── PSA reproducibility ───────────────────────────────────────
 psa_seed <- 2025
 
 # ── PSA sample size ────────────────────────────────────────────
 # Convergence re-checked 24 Aug 2026, directly against the current
-# saved draws (post pct20-removal / Scenario-A-G-removal / real-D-E
-# split) — the previous version of this comment (10k 6.2-6.5%, 20k
-# 4.2-4.8%, 50k 3.2%) was from an earlier, noisier run (pre Dirichlet-
-# sampling fix) and had gone stale; nobody had re-verified it against
-# fresh output. Re-measured MC SE as % of mean NMB, worst strategy per
+# saved draws. Re-measured MC SE as % of mean NMB, worst strategy per
 # scenario, across the primary model and every current scenario
 # (B/C/D/E/F/H):
 #   n=2,000  primary model FAILS the 5% tolerance (5.3-5.6%)
 #   n=5,000  every scenario PASSES, worst case (primary) 3.5%,
 #            comfortable margin, not thin
-#   n=50,000 worst case (primary) ~1.1% -- 50k is a >10x safety
-#            margin above the ~5k point where convergence actually
-#            happens, not a tight requirement
 
 n_psa <- 5000L
 
@@ -238,8 +236,10 @@ cohort_age_sd     <- 17.935
 
 # ── Post-TB excess mortality (SMR) ────────────────────────────
 # TB survivors die at a higher rate than the general population for
-# years afterwards. An SMR multiplies every age-specific death
-# probability from the life table, shortening remaining life
+# years afterwards. An SMR multiplies every age-specific mortality
+# HAZARD from the life table (applied as q' = 1-(1-q)^SMR in
+# discounted_life_expectancy(), 01_helpers.R -- not q*SMR directly,
+# which is demographically approximate), shortening remaining life
 # expectancy accordingly.
 #
 # Base case = 2.3, from Selvaraju S et al., "Long-term Survival of

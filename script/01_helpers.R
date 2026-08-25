@@ -256,7 +256,23 @@ discounted_life_expectancy <- function(start_age    = cohort_mean_age,
                                                     # already credited as Year 1.
     q <- qx_by_age[[as.character(a)]]
     if (is.null(q) || is.na(q)) q <- 1          # past table end: assume death
-    q <- min(q * smr, 1)                         # apply excess mortality, cap at 1
+    q <- 1 - (1 - q)^smr                         # apply excess mortality via the hazard, not the
+                                                  # probability directly -- q*smr (the previous
+                                                  # method here) is demographically approximate: an
+                                                  # SMR multiplies the mortality HAZARD, and
+                                                  # q*smr > 1-(1-q)^smr for any SMR>1 (provably, via
+                                                  # a one-line calculus argument), so the old method
+                                                  # assigned SLIGHTLY MORE mortality than intended --
+                                                  # a conservative bias against NPY, not in its
+                                                  # favour. Verified directly against this project's
+                                                  # own life table: 0.32% shorter discounted LE at
+                                                  # the base case (SMR 2.3), up to 0.64% at the most
+                                                  # extreme sweep value (SMR 4.2) -- see WORKLOG.md,
+                                                  # 25 Aug 2026, for the full audit (four independent
+                                                  # AI reviews disagreed on the bias direction; this
+                                                  # was settled by direct computation, not argument).
+                                                  # 1-(1-q)^smr is naturally bounded in [0,1] for any
+                                                  # smr>0, so the min(...,1) cap is no longer needed.
     # life-years lived during this year: survivors get 1, decedents get 0.5
     lived <- alive * (1 - q) + alive * q * 0.5
     total <- total + lived / ((1 + discount_rate)^year)
