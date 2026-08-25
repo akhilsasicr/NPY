@@ -137,7 +137,7 @@ replication_row <- data.frame(
   Replicated_Range_High       = round(cost_per_daly_hi, 1),
   Ochalek_2026_Published      = 609,
   Discrepancy_USD             = round(609 - cost_per_daly_central, 1),
-  Note = "See script comments below and WORKLOG.md (25 Aug 2026) for full sourcing and discussion."
+  Note = "See script comments below for full sourcing and discussion."
 )
 
 write_xlsx(list(
@@ -251,8 +251,7 @@ cat("model's threshold sensitivity, see 05_scenario_C_premature_death_qaly.R.\n"
 #   reaches ~$515. The gap is not resolved: possible causes include
 #   her averaging across four DALY measures (DALY 1-4) rather than
 #   DALY 4 alone, a different GHE/GBD data vintage, or an elasticity
-#   not reducible to the single point estimate used here. See
-#   WORKLOG.md (25 Aug 2026 entry) for the full discussion.
+#   not reducible to the single point estimate used here.
 #
 #   This section does NOT change wtp_opportunity_cost or any model
 #   result -- it is a documented, reproducible disclosure only.

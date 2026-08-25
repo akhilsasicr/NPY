@@ -50,7 +50,7 @@ psa_seed <- 2025
 # Convergence re-checked 24 Aug 2026, directly against the current
 # saved draws. Re-measured MC SE as % of mean NMB, worst strategy per
 # scenario, across the primary model and every current scenario
-# (B/C/D/E/F/H):
+# (A/B/C/D):
 #   n=2,000  primary model FAILS the 5% tolerance (5.3-5.6%)
 #   n=5,000  every scenario PASSES, worst case (primary) 3.5%,
 #            comfortable margin, not thin
@@ -205,7 +205,7 @@ scenario_c_outcome_improve <- 0.90
 # approximation specifically for the age-0 band, where real infant
 # deaths are front-loaded within the year rather than uniformly
 # spread — a known limitation of this reconstruction method, not
-# investigated further since Scenario F uses remaining life
+# investigated further since Scenario C uses remaining life
 # expectancy FROM cohort_mean_age, not life expectancy at birth, so
 # this specific small gap does not propagate into that calculation).
 # NOTE: this line needs `root` to already exist in the calling
@@ -228,7 +228,7 @@ lifetable_path <- file.path(root, "input", "SRS_lifetable_India_2020-24.csv")
 # cohort throughout, not independently derived. A single mean age is
 # used since the model has no age structure — an approximation, since
 # remaining life expectancy is non-linear in age. cohort_median_age/
-# cohort_age_sd exist so Scenario F can sweep across the age
+# cohort_age_sd exist so Scenario C can sweep across the age
 # distribution as a robustness check (same pattern as the SMR sweep).
 cohort_mean_age   <- 38.231
 cohort_median_age <- 36
@@ -274,7 +274,7 @@ post_tb_smr <- 2.3
 
 # PSA range — Selvaraju's reported 95% CI. sample_psa_params() draws
 # post_tb_smr from a Beta fitted to this mean+CI on every iteration,
-# rather than holding SMR fixed, so Scenario F's PSA reflects genuine
+# rather than holding SMR fixed, so Scenario C's PSA reflects genuine
 # SMR uncertainty too.
 post_tb_smr_ci <- c(lo = 1.7, hi = 3.1)
 
@@ -295,7 +295,7 @@ post_tb_smr_ci <- c(lo = 1.7, hi = 3.1)
 #          stress-test value, not a like-for-like estimate.
 # Excludes Romanowski's cure-restricted
 # 3.76 (higher than the all-treated 2.91, the wrong direction for a
-# cured subgroup — likely a selection artifact; Scenario F applies
+# cured subgroup — likely a selection artifact; Scenario C applies
 # SMR to all year-1 survivors, so all-treated is the right population
 # match anyway).
 post_tb_smr_range <- c(1.00, 1.22, 2.30, 2.91, 4.20)
@@ -334,7 +334,7 @@ nocost_param_names <- c(
 # is a large percentage of that mean (a real run: 12.9-14.2%).
 # Reaching 2% would need ~42x more iterations for no decision-
 # relevant benefit — the actual robustness question is answered by
-# Scenario F's ICER/breakeven margin, which is large. Scenario F's
+# Scenario C's ICER/breakeven margin, which is large. Scenario C's
 # own PSA (larger NMB scale) sits at 2.6-3.1% and passes even the
 # stricter bar.
 psa_convergence_tol_pct <- 0.05

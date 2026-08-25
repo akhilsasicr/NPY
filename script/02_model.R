@@ -155,15 +155,15 @@ beta_params           <- param_df$Parameter[param_df$distribution == "beta"]
 # cost_params: the cost parameters the PRIMARY model actually reads.
 # The Excel also contains 48 extra gamma-typed
 # rows — the `_hs` (health system) and `_pt` (patient) cost splits
-# added for Scenarios D/E. The primary model never reads those, but
-# they were being swept up here, which meant: 48 wasted Gamma draws
-# per PSA iteration, 96 pointless OWSA model runs (all returning
-# NMB_range = 0 and cluttering the OWSA table), and 48 needless GAM
-# fits in EVPPI. Results were unaffected (a parameter the model never
-# reads cannot change the answer) but the waste is real. Scenarios
-# D/E inject their `_hs`/`_pt` values explicitly via
+# used by Scenario B's two perspectives. The primary model never reads
+# those, but they were being swept up here, which meant: 48 wasted
+# Gamma draws per PSA iteration, 96 pointless OWSA model runs (all
+# returning NMB_range = 0 and cluttering the OWSA table), and 48
+# needless GAM fits in EVPPI. Results were unaffected (a parameter the
+# model never reads cannot change the answer) but the waste is real.
+# Scenario B injects its `_hs`/`_pt` values explicitly via
 # make_persp_base() / sample_persp_psa() in 04_scenarios.R, so
-# excluding them here does not affect those scenarios.
+# excluding them here does not affect that scenario.
 cost_params           <- grep("_(hs|pt)$", param_df$Parameter[param_df$distribution == "gamma"],
                               value = TRUE, invert = TRUE)
 dirichlet_group_names <- unique(dirichlet_groups$sum_check_group)
@@ -442,7 +442,7 @@ wtp_range <- seq(0, ceiling(wtp * 2), by = 1)
 # primary PSA converge" — they ask which parameter is worth
 # researching further, not what the answer is — so that code now
 # lives in its own script, 05_value_of_information.R, which can be
-# run any time after this script (same pattern as Scenario F in
+# run any time after this script (same pattern as Scenario C in
 # 06_scenario_F_premature_death_qaly.R). That script needs the PSA
 # parameter DRAWS themselves (not just the resulting costs/QALYs
 # already saved to PSA_raw_results.xlsx above), so those draws are

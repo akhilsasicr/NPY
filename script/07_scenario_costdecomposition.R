@@ -59,7 +59,7 @@
 #                                  can reference "Parameter" cells
 #                                  directly instead of duplicating
 #                                  hardcoded totals that could go stale)
-#     "System vs patient split"   (used by Scenarios D/E, 04_scenarios.R)
+#     "System vs patient split"   (used by Scenario B, 04_scenarios.R)
 #     "Instructions"               (human-readable only, not read by R)
 #   See the "NPY transfer" sheet's "status" column: CONFIRMED rows are
 #   settled; PLACEHOLDER rows are assumptions still needing sign-off,
@@ -100,7 +100,7 @@ main_params <- read_excel(input_xlsx, sheet = "Parameter") %>%
 
 cat("Loading NPY transfer parameters (input/model_input_parameters.xlsx, sheet 'NPY transfer') ...\n")
 # This whole script needs the transfer table to do anything meaningful
-# (unlike Scenario D/E, there's no partial/skip mode here) - fail with
+# (unlike Scenario B, there's no partial/skip mode here) - fail with
 # a clear, actionable message instead of an opaque zip-parsing error
 # if the sheet is missing.
 sheet_names_check <- readxl::excel_sheets(input_xlsx)

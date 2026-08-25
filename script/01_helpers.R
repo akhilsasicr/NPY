@@ -170,9 +170,9 @@ compute_qalys_3yr <- function(p, discount_rate = discount_rate_qaly) {
 }
 
 # ============================================================
-# LIFE TABLE — remaining life expectancy for Scenario F
+# LIFE TABLE — remaining life expectancy for Scenario C
 # ============================================================
-# These two functions exist so Scenario F can use a REAL, sourced
+# These two functions exist so Scenario C can use a REAL, sourced
 # figure for "how many more years does a survivor live," rather than
 # a hardcoded guess.
 
@@ -194,7 +194,7 @@ compute_qalys_3yr <- function(p, discount_rate = discount_rate_qaly) {
 load_lifetable <- function(path = lifetable_path) {
   if (!file.exists(path))
     stop("Life table not found at: ", path,
-         "\nScenario F needs input/SRS_lifetable_India_2020-24.csv.")
+         "\nScenario C needs input/SRS_lifetable_India_2020-24.csv.")
   lt <- utils::read.csv(path, stringsAsFactors = FALSE)
   if (!all(c("age", "qx_annual") %in% names(lt)))
     stop("Life table must have columns 'age' and 'qx_annual'; found: ",
@@ -267,10 +267,8 @@ discounted_life_expectancy <- function(start_age    = cohort_mean_age,
                                                   # favour. Verified directly against this project's
                                                   # own life table: 0.32% shorter discounted LE at
                                                   # the base case (SMR 2.3), up to 0.64% at the most
-                                                  # extreme sweep value (SMR 4.2) -- see WORKLOG.md,
-                                                  # 25 Aug 2026, for the full audit (four independent
-                                                  # AI reviews disagreed on the bias direction; this
-                                                  # was settled by direct computation, not argument).
+                                                  # extreme sweep value (SMR 4.2), settled by direct
+                                                  # computation, not argument.
                                                   # 1-(1-q)^smr is naturally bounded in [0,1] for any
                                                   # smr>0, so the min(...,1) cap is no longer needed.
     # life-years lived during this year: survivors get 1, decedents get 0.5
@@ -283,7 +281,7 @@ discounted_life_expectancy <- function(start_age    = cohort_mean_age,
 }
 
 # ------------------------------------------------------------
-# compute_qalys_lifetime(): Scenario F's QALY set.
+# compute_qalys_lifetime(): Scenario C's QALY set.
 # ------------------------------------------------------------
 # Adds a discounted future-QALY term on top of the 1-year decision
 # tree (no restructuring needed): survivors of year 1 accrue post-
@@ -747,7 +745,7 @@ rgamma_ci <- function(n, mu, lo, hi) {
 #   5. Gamma draws for No NPY costs (nocost_nr_*)
 #   6. RI clamp: p_ri_timely must be >= p_soc_timely
 #   7. Utility ordering: success utility >= failure utility
-#   8. Post-TB excess mortality (SMR) draw — Scenario F only
+#   8. Post-TB excess mortality (SMR) draw — Scenario C only
 #
 # Step 1 — Dirichlet groups:
 #   Dirichlet groups (which include the receipt proportions
@@ -925,7 +923,7 @@ sample_psa_params <- function(n, base, beta_set, cost_params,
                                         upper = p$uv_drtb_suc_after)
     }
 
-    # ── 8. Post-TB excess mortality (SMR) — Scenario F only ───────
+    # ── 8. Post-TB excess mortality (SMR) — Scenario C only ───────
     # SMR is a positive ratio with no upper bound of 1 (values run
     # 1.0-4.2+ in the sweep), so it is sampled via
     # rgamma_ci() — the same distribution family used for costs —
