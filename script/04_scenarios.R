@@ -21,7 +21,7 @@
 #   parameter list (p_a) before calling the SAME shared strat_ev()/
 #   nonpy_ev() used everywhere else.
 #
-# SCENARIO B: Cost-perspective split (health-system and patient)
+# SCENARIO B: Cost decomposition (health-system and patient)
 #   Same tree, same probabilities/utilities — only the cost
 #   parameters are swapped. Each total cost = NPY transfer (100%
 #   health-system outlay, exact per the outcome rule — see
@@ -31,7 +31,7 @@
 #   cost_patient_DSTB, cost_healthsystem_DRTB, cost_patient_DRTB). NO
 #   GUESSED SPLIT IS USED — if any of the four are missing, Scenario B
 #   is SKIPPED entirely (not run on a placeholder) and a clear message
-#   is printed explaining why. Two perspectives (health-system,
+#   is printed explaining why. Two views (health-system,
 #   patient), one scenario, one output folder — they are the same
 #   decomposition viewed from two sides, not independent scenarios.
 #
@@ -335,12 +335,12 @@ check_psa_convergence(psa_D, nmb_cols = c("nmb_soc", "nmb_ri", "nmb_ii"),
 cat("OK - Scenario D complete\n")
 
 # ============================================================
-# SCENARIO B — COST PERSPECTIVES (HEALTH-SYSTEM AND PATIENT)
+# SCENARIO B — COST DECOMPOSITION (HEALTH-SYSTEM VS. PATIENT)
 # ============================================================
 # The primary model uses total societal costs (health system +
 # patient out-of-pocket combined). This scenario re-runs the SAME
 # decision tree using only one cost component at a time, from two
-# perspectives — letting the PI assess cost-effectiveness from a
+# views — letting the PI assess cost-effectiveness from a
 # narrow health-system-budget view or the patient-household view.
 # Merged into ONE scenario (24 Aug 2026, previously two: D and E) —
 # they are the same cost decomposition viewed from two sides, not two
@@ -435,7 +435,7 @@ if (scenario_b_available) {
 
   # make_persp_base(): replaces the 18 NPY-active cost parameters and
   # the 6 No-NPY counterfactual cost parameters with their
-  # perspective-specific value, but via TWO DIFFERENT mechanisms,
+  # decomposition-specific value, but via TWO DIFFERENT mechanisms,
   # because they come from two independently-sourced datasets that
   # were never calibrated against each other:
   #
@@ -546,18 +546,18 @@ if (scenario_b_available) {
 
   model_primary <- function(p) run_model(p, compute_qalys(p), or_che_outcome, split_mode = "marginal", cap_env = NULL)
 
-  # ── Health-system perspective ──────────────────────────────
-  cat("\n\n============================================================\nSCENARIO B: Cost perspectives — health-system\n============================================================\n")
+  # ── Health-system share ──────────────────────────────
+  cat("\n\n============================================================\nSCENARIO B: Cost decomposition — health-system\n============================================================\n")
   base_hs <- make_persp_base(base, "_hs")
   br_B_hs <- model_primary(base_hs)
   costs_B_hs <- c(br_B_hs$cost_nonpy, br_B_hs$cost_soc, br_B_hs$cost_ri, br_B_hs$cost_ii)
   qalys_B_hs <- c(br_B_hs$qaly_nonpy, br_B_hs$qaly_soc, br_B_hs$qaly_ri, br_B_hs$qaly_ii)
   cats_B_hs  <- c(br_B_hs$cat_nonpy,  br_B_hs$cat_soc,  br_B_hs$cat_ri,  br_B_hs$cat_ii)
-  print_icer("Scenario B: Health-system perspective", strats, costs_B_hs, qalys_B_hs, cats_B_hs, wtp,
+  print_icer("Scenario B: Health-system share", strats, costs_B_hs, qalys_B_hs, cats_B_hs, wtp,
              icer_xlsx_path     = file.path(out_B, "tables", "health_system_icer_table.xlsx"),
              frontier_xlsx_path = file.path(out_B, "tables", "health_system_efficiency_frontier.xlsx"))
 
-  cat("\n── Perspective comparison (Realistic Impr. vs No NPY) ──\n")
+  cat("\n── Cost-share comparison (Realistic Impr. vs No NPY) ──\n")
   cat(sprintf("  Total (societal) cost - No NPY: $%.2f  RI: $%.2f\n", br$cost_nonpy, br$cost_ri))
   cat(sprintf("  Health sys cost  - No NPY: $%.2f  RI: $%.2f  (HS fraction: %.0f%%/%.0f%%)\n",
               br_B_hs$cost_nonpy, br_B_hs$cost_ri, 100 * br_B_hs$cost_nonpy / br$cost_nonpy, 100 * br_B_hs$cost_ri / br$cost_ri))
@@ -572,7 +572,7 @@ if (scenario_b_available) {
 
   write_xlsx(psa_B_hs, file.path(out_B, "tables", "health_system_psa_raw.xlsx"))
   saveRDS(psa_B_hs, file = file.path(out_rds, "psa_raw_B_hs.rds"))
-  make_ceac_plot(psa_B_hs, wtp, wtp_range, "Scenario B: Health-system perspective",
+  make_ceac_plot(psa_B_hs, wtp, wtp_range, "Scenario B: Health-system share",
                  png_path  = file.path(out_B, "plots", "health_system_ceac.png"),
                  xlsx_path = file.path(out_B, "tables", "health_system_ceac_data.xlsx"))
 
@@ -587,18 +587,18 @@ if (scenario_b_available) {
                          xlsx_path = file.path(out_B, "tables", "health_system_psa_convergence_summary.xlsx"))
   cat("OK - Scenario B (health-system) complete\n")
 
-  # ── Patient perspective ────────────────────────────────────
-  cat("\n\n============================================================\nSCENARIO B: Cost perspectives — patient\n============================================================\n")
+  # ── Patient share ────────────────────────────────────
+  cat("\n\n============================================================\nSCENARIO B: Cost decomposition — patient\n============================================================\n")
   base_pt <- make_persp_base(base, "_pt")
   br_B_pt <- model_primary(base_pt)
   costs_B_pt <- c(br_B_pt$cost_nonpy, br_B_pt$cost_soc, br_B_pt$cost_ri, br_B_pt$cost_ii)
   qalys_B_pt <- c(br_B_pt$qaly_nonpy, br_B_pt$qaly_soc, br_B_pt$qaly_ri, br_B_pt$qaly_ii)
   cats_B_pt  <- c(br_B_pt$cat_nonpy,  br_B_pt$cat_soc,  br_B_pt$cat_ri,  br_B_pt$cat_ii)
-  print_icer("Scenario B: Patient perspective", strats, costs_B_pt, qalys_B_pt, cats_B_pt, wtp,
+  print_icer("Scenario B: Patient share", strats, costs_B_pt, qalys_B_pt, cats_B_pt, wtp,
              icer_xlsx_path     = file.path(out_B, "tables", "patient_icer_table.xlsx"),
              frontier_xlsx_path = file.path(out_B, "tables", "patient_efficiency_frontier.xlsx"))
 
-  cat("\n── Perspective comparison (Realistic Impr. vs No NPY) ──\n")
+  cat("\n── Cost-share comparison (Realistic Impr. vs No NPY) ──\n")
   cat(sprintf("  Total (societal) cost - No NPY: $%.2f  RI: $%.2f\n", br$cost_nonpy, br$cost_ri))
   cat(sprintf("  Patient cost    - No NPY: $%.2f  RI: $%.2f  (Pt fraction: %.0f%%/%.0f%%)\n",
               br_B_pt$cost_nonpy, br_B_pt$cost_ri, 100 * br_B_pt$cost_nonpy / br$cost_nonpy, 100 * br_B_pt$cost_ri / br$cost_ri))
@@ -613,7 +613,7 @@ if (scenario_b_available) {
 
   write_xlsx(psa_B_pt, file.path(out_B, "tables", "patient_psa_raw.xlsx"))
   saveRDS(psa_B_pt, file = file.path(out_rds, "psa_raw_B_pt.rds"))
-  make_ceac_plot(psa_B_pt, wtp, wtp_range, "Scenario B: Patient perspective",
+  make_ceac_plot(psa_B_pt, wtp, wtp_range, "Scenario B: Patient share",
                  png_path  = file.path(out_B, "plots", "patient_ceac.png"),
                  xlsx_path = file.path(out_B, "tables", "patient_ceac_data.xlsx"))
 
@@ -628,9 +628,9 @@ if (scenario_b_available) {
                          xlsx_path = file.path(out_B, "tables", "patient_psa_convergence_summary.xlsx"))
   cat("OK - Scenario B (patient) complete\n")
 
-  # Combined summary for the scenario (both perspectives, one table)
+  # Combined summary for the scenario (both shares, one table)
   persp_summary <- data.frame(
-    Perspective = c("Health-system", "Patient"),
+    Component = c("Health-system", "Patient"),
     Cost_RI     = round(c(br_B_hs$cost_ri, br_B_pt$cost_ri), 4),
     QALY_RI     = round(c(br_B_hs$qaly_ri, br_B_pt$qaly_ri), 6),
     ICER_vs_NoNPY = round(c(
@@ -643,7 +643,7 @@ if (scenario_b_available) {
     )
   )
   write_xlsx(persp_summary, file.path(out_B, "tables", "perspective_summary.xlsx"))
-  cat("\nOK - Scenario B combined perspective summary saved\n")
+  cat("\nOK - Scenario B combined cost-share summary saved\n")
 } else {
   cat("\n*** SCENARIO B SKIPPED ***\n")
   cat("Reason: input/model_input_parameters.xlsx is missing one or more of:\n")
@@ -675,7 +675,7 @@ pce_ri <- function(psa_df) round(100 * mean((wtp * (psa_df$qaly_ri - psa_df$qaly
 if (scenario_b_available) {
   summary_tbl <- data.frame(
     Scenario       = c("Primary (societal)", "A: Temporal mismatch",
-                       "B: Cost perspective (health-system)", "B: Cost perspective (patient)",
+                       "B: Cost decomposition (health-system)", "B: Cost decomposition (patient)",
                        "D: DR-TB utility ratio"),
     QALY_RI        = round(c(br$qaly_ri, br_A$qaly_ri, br_B_hs$qaly_ri, br_B_pt$qaly_ri, br_D$qaly_ri), 6),
     Cost_RI        = round(c(br$cost_ri, br_A$cost_ri, br_B_hs$cost_ri, br_B_pt$cost_ri, br_D$cost_ri), 4),
@@ -691,7 +691,7 @@ if (scenario_b_available) {
   # explicitly marked as skipped rather than omitted silently.
   summary_tbl <- data.frame(
     Scenario       = c("Primary (societal)", "A: Temporal mismatch",
-                       "B: Cost perspective (health-system)", "B: Cost perspective (patient)",
+                       "B: Cost decomposition (health-system)", "B: Cost decomposition (patient)",
                        "D: DR-TB utility ratio"),
     QALY_RI        = c(round(c(br$qaly_ri, br_A$qaly_ri), 6), NA, NA, round(br_D$qaly_ri, 6)),
     Cost_RI        = c(round(c(br$cost_ri, br_A$cost_ri), 4), NA, NA, round(br_D$cost_ri, 4)),
@@ -710,9 +710,9 @@ cat("OK - Summary comparison table saved\n")
 cat("\n========================================================\nSCENARIO SCRIPT COMPLETE\n========================================================\n")
 cat("Scenario A (Temporal mismatch): OK - Base case + PSA + CEAC\n")
 if (scenario_b_available) {
-  cat("Scenario B (Cost perspective):  OK - Base case + PSA + CEAC [real cost split, both perspectives]\n")
+  cat("Scenario B (Cost decomposition):   OK - Base case + PSA + CEAC [real cost split, both shares]\n")
 } else {
-  cat("Scenario B (Cost perspective):  SKIPPED - no real cost split yet (see message above)\n")
+  cat("Scenario B (Cost decomposition):   SKIPPED - no real cost split yet (see message above)\n")
 }
 cat("Scenario D (DR-TB utility ratio):OK - Base case + PSA + CEAC\n")
 cat("Scenario C (Premature-death QALY): see 05_scenario_C_premature_death_qaly.R (run separately)\n")

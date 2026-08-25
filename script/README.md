@@ -74,7 +74,7 @@ for every run (there is no longer a per-uncertainty-mode split).
                  each scenario's raw PSA draws to
                  output/rds/psa_raw_<letter>.rds (e.g. psa_raw_A.rds;
                  Scenario B saves two, psa_raw_B_hs.rds and
-                 psa_raw_B_pt.rds, one per cost perspective) — same
+                 psa_raw_B_pt.rds, one per cost share) — same
                  data as that scenario's
                  output/scenarios/<name>/tables/*psa_raw.xlsx, just
                  faster to reload for anything that only needs to
@@ -186,7 +186,7 @@ input/SRS_lifetable_India_2020-24.csv
 | | What it changes vs the primary model |
 |---|---|
 | A | Temporal mismatch correction: Rs.1000 current costs vs Rs.500-era effectiveness data — models the effectiveness gain expected from the larger transfer (CHE protection + treatment outcomes), holding coverage and cost constant |
-| B | Cost perspective, health-system and patient (one scenario, two views): re-runs the same tree with only the health-system share or only the patient share of cost. Skipped entirely if the real flat cost-split figures aren't in `model_input_parameters.xlsx` — no placeholder is ever used |
+| B | Cost decomposition, health-system vs. patient (one scenario, two views): re-runs the same tree with only the health-system share or only the patient share of cost. Skipped entirely if the real flat cost-split figures aren't in `model_input_parameters.xlsx` — no placeholder is ever used |
 | C | Premature-death QALY loss — see below (own script, `05_scenario_C_premature_death_qaly.R`) |
 | D | DR-TB utility derived as a ratio off India's own DS-TB utility, instead of importing a Thailand study's absolute value directly — see `dr_ds_utility_ratio`, `00_config.R` Group D, for the citation and caveats |
 
